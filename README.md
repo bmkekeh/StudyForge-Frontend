@@ -101,3 +101,11 @@ Track quiz performance
 ```
 
 There is still more I want to add, but the core study workflow is working.
+
+## Backend
+
+The backend for StudyForge is available here:
+
+[StudyForge Backend](https://github.com/bmkekeh/StudyForge)
+
+It is built with Spring Boot and PostgreSQL and handles the REST API, database storage, course materials, generated study content, and quiz attempt history.
