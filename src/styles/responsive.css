@@ -1,0 +1,194 @@
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .overview-grid,
+  .concept-grid,
+  .summary-two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 850px) {
+  .dashboard-nav-inner,
+  .dashboard-container,
+  .dashboard-footer-inner,
+  .course-page {
+    width: min(100% - 32px, 1180px);
+  }
+
+  .dashboard-container {
+    padding-top: 48px;
+  }
+
+  .dashboard-hero {
+    display: block;
+  }
+
+  .dashboard-summary-card {
+    width: fit-content;
+
+    margin-top: 28px;
+  }
+
+  .course-form {
+    grid-template-columns: 1fr;
+  }
+
+  .add-course-button {
+    width: 100%;
+  }
+
+  .upload-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .upload-controls {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .course-page {
+    padding-top: 24px;
+  }
+
+  .course-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .delete-course-button {
+    width: 100%;
+  }
+
+  .course-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .course-tab {
+    text-align: left;
+  }
+
+  .panel-header {
+    flex-direction: column;
+  }
+
+  .panel-badge {
+    display: inline-block;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .saved-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .saved-item-actions {
+    width: 100%;
+  }
+
+  .saved-open-button,
+  .saved-delete-button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-nav-inner {
+    height: 64px;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .dashboard-nav-right {
+    padding: 7px;
+  }
+
+  .nav-status-text {
+    display: none;
+  }
+
+  .dashboard-container {
+    padding-top: 38px;
+  }
+
+  .dashboard-hero h1 {
+    font-size: 39px;
+  }
+
+  .dashboard-hero p {
+    font-size: 14px;
+  }
+
+  .create-course-card {
+    padding: 19px;
+  }
+
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-footer-inner {
+    min-height: 80px;
+
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 6px;
+  }
+}
+
+@media (max-width: 500px) {
+  .course-topbar {
+    gap: 15px;
+  }
+
+  .course-hero-copy h1 {
+    font-size: 24px;
+  }
+
+  .course-panel {
+    padding: 19px;
+  }
+
+  .upload-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .upload-controls input[type="file"] {
+    width: 100%;
+    max-width: none;
+  }
+
+  .study-generator-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .study-control input,
+  .study-control select,
+  .generate-button {
+    width: 100%;
+  }
+
+  .flashcard {
+    height: 360px;
+  }
+
+  .flashcard-face {
+    padding: 25px;
+  }
+
+  .flashcard-face h3 {
+    font-size: 16px;
+  }
+}

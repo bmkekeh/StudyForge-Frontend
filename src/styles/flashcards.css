@@ -1,0 +1,168 @@
+/* =========================================================
+   FLASHCARDS
+========================================================= */
+
+.flashcard {
+  width: 100%;
+  max-width: 720px;
+  height: 320px;
+
+  margin: 32px auto 22px;
+
+  cursor: pointer;
+
+  perspective: 1200px;
+}
+
+.flashcard-inner {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+
+  transition:
+    transform 0.6s cubic-bezier(
+      0.4,
+      0,
+      0.2,
+      1
+    );
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 42px;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fcfcff
+    );
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  text-align: center;
+
+  box-shadow:
+    0 14px 36px rgba(15, 23, 42, 0.07);
+}
+
+.flashcard-face::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  border-radius: 17px 17px 0 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      #6366f1,
+      #a5b4fc
+    );
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f5f7ff
+    );
+}
+
+.flashcard-face h3 {
+  max-width: 600px;
+
+  margin: 20px 0;
+
+  color: #18212f;
+
+  font-size: 18px;
+  font-weight: 650;
+
+  line-height: 1.6;
+}
+
+.flashcard-label {
+  color: #6366f1;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+}
+
+.flashcard-face small {
+  color: #98a2b3;
+
+  font-size: 9px;
+}
+
+.flashcard-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin: 16px 0;
+}
+
+.flashcard-navigation button {
+  padding: 8px 13px;
+
+  border: 1px solid #d9dde5;
+  border-radius: 8px;
+
+  background: white;
+
+  color: #344054;
+
+  font-size: 10px;
+  font-weight: 650;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.flashcard-navigation button:hover:not(:disabled) {
+  border-color: #c7d2fe;
+
+  background: #f5f7ff;
+}
+
+.flashcard-navigation button:disabled {
+  opacity: 0.4;
+}
