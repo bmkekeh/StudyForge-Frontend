@@ -18,34 +18,38 @@ function Dashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    loadCourses();
-  }, []);
+    async function load() {
+      setLoadingCourses(true);
+      setError("");
 
-  const loadCourses = async () => {
-    setLoadingCourses(true);
-    setError("");
+      try {
+        const response = await fetch(
+          "http://localhost:8080/courses",
+        );
 
-    try {
-      const response = await fetch(
-        "http://localhost:8080/courses",
-      );
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load courses.",
+          );
+        }
 
-      if (!response.ok) {
-        throw new Error("Failed to load courses.");
+        const data: Course[] =
+          await response.json();
+
+        setCourses(data);
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          "Could not load your courses. Make sure the backend is running.",
+        );
+      } finally {
+        setLoadingCourses(false);
       }
-
-      const data = await response.json();
-
-      setCourses(data);
-    } catch (err) {
-      console.error(err);
-      setError(
-        "Could not load your courses. Make sure the backend is running.",
-      );
-    } finally {
-      setLoadingCourses(false);
     }
-  };
+
+    void load();
+  }, []);
 
   const addCourse = async () => {
     if (!name.trim()) {

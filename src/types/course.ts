@@ -31,6 +31,7 @@ export type SavedSummary = {
 };
 
 export type QuizQuestion = {
+  topic: string;
   question: string;
   options: string[];
   correctAnswer: number;
@@ -64,6 +65,11 @@ export type SavedFlashcardSet = {
   createdAt: string;
 };
 
+export type QuizMistake = {
+  topic: string;
+  question: string;
+};
+
 export type QuizAttempt = {
   id: number;
   score: number;
@@ -71,9 +77,27 @@ export type QuizAttempt = {
   completedAt: string;
 };
 
+export type QuizAttemptStats = {
+  attemptsCompleted: number;
+  averageScore: number;
+  bestScore: number;
+  latestScore: number;
+};
+
+export type WeakTopic = {
+  topic: string;
+  mistakeCount: number;
+};
+
+export type GeneratedQuizResponse = {
+  quizId: number;
+  quiz: Quiz;
+};
+
 export type Tab =
   | "overview"
   | "materials"
   | "summary"
   | "quizzes"
-  | "flashcards";
+  | "flashcards"
+  | "progress";

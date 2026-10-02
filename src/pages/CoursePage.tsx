@@ -10,10 +10,15 @@ import MaterialsTab from "../components/course/MaterialsTab";
 import SummaryTab from "../components/course/SummaryTab";
 import QuizTab from "../components/course/QuizTab";
 import FlashcardsTab from "../components/course/FlashcardsTab";
+import ProgressTab from "../components/course/ProgressTab";
 
 import type {
   Course,
   StudyMaterial,
+  QuizAttempt,
+  QuizAttemptStats,
+  WeakTopic,
+  GeneratedQuizResponse,
   Tab,
 } from "../types/course";
 
@@ -37,8 +42,34 @@ function CoursePage() {
   const [activeTab, setActiveTab] =
     useState<Tab>("overview");
 
+  const [weakTopics, setWeakTopics] =
+    useState<WeakTopic[]>([]);
+
   const [error, setError] =
     useState("");
+
+  /* =========================
+     PROGRESS STATE
+  ========================= */
+
+  const [quizStats, setQuizStats] =
+    useState<QuizAttemptStats | null>(null);
+
+  const [quizAttempts, setQuizAttempts] =
+    useState<QuizAttempt[]>([]);
+
+  const [
+    loadingQuizStats,
+    setLoadingQuizStats,
+  ] = useState(true);
+
+  const [
+    practiceQuiz,
+    setPracticeQuiz,
+  ] =
+    useState<GeneratedQuizResponse | null>(
+      null,
+    );
 
   /* =========================
      LOAD DATA
@@ -48,6 +79,10 @@ function CoursePage() {
     if (!courseId) {
       return;
     }
+
+    /* =========================
+       LOAD COURSE
+    ========================= */
 
     const loadCourse = async () => {
       try {
@@ -74,6 +109,10 @@ function CoursePage() {
       }
     };
 
+    /* =========================
+       LOAD MATERIALS
+    ========================= */
+
     const loadMaterials = async () => {
       try {
         const response = await fetch(
@@ -99,8 +138,104 @@ function CoursePage() {
       }
     };
 
+    /* =========================
+       LOAD QUIZ STATS
+    ========================= */
+
+    const loadQuizStats = async () => {
+      setLoadingQuizStats(true);
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/courses/${courseId}/quiz-attempts/stats`,
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load quiz statistics.",
+          );
+        }
+
+        const data: QuizAttemptStats =
+          await response.json();
+
+        setQuizStats(data);
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          "Could not load quiz progress.",
+        );
+      } finally {
+        setLoadingQuizStats(false);
+      }
+    };
+
+    /* =========================
+       LOAD QUIZ ATTEMPTS
+    ========================= */
+
+    const loadQuizAttempts = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/courses/${courseId}/quiz-attempts`,
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load quiz attempts.",
+          );
+        }
+
+        const data: QuizAttempt[] =
+          await response.json();
+
+        setQuizAttempts(data);
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          "Could not load quiz attempt history.",
+        );
+      }
+    };
+
+    /* =========================
+       LOAD WEAK TOPICS
+    ========================= */
+
+    const loadWeakTopics = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/courses/${courseId}/quiz-attempts/weak-topics`,
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load weak topics.",
+          );
+        }
+
+        const data: WeakTopic[] =
+          await response.json();
+
+        setWeakTopics(data);
+      } catch (err) {
+        console.error(err);
+
+        setWeakTopics([]);
+      }
+    };
+
+    /* =========================
+       RUN LOADERS
+    ========================= */
+
     loadCourse();
     loadMaterials();
+    loadQuizStats();
+    loadQuizAttempts();
+    loadWeakTopics();
   }, [courseId]);
 
   /* =========================
@@ -148,7 +283,6 @@ function CoursePage() {
     return (
       <div className="course-page-shell">
         <div className="course-page">
-
           <div className="course-message error">
             Invalid course ID.
           </div>
@@ -159,7 +293,6 @@ function CoursePage() {
           >
             ← Back to Dashboard
           </Link>
-
         </div>
       </div>
     );
@@ -171,7 +304,6 @@ function CoursePage() {
 
   return (
     <div className="course-page-shell">
-
       <div className="course-page">
 
         {/* =====================
@@ -179,7 +311,6 @@ function CoursePage() {
         ====================== */}
 
         <div className="course-topbar">
-
           <Link
             to="/"
             className="back-link"
@@ -190,7 +321,6 @@ function CoursePage() {
           <span className="course-brand">
             StudyForge
           </span>
-
         </div>
 
         {/* =====================
@@ -198,9 +328,7 @@ function CoursePage() {
         ====================== */}
 
         <section className="course-hero">
-
           <div className="course-hero-main">
-
             <div className="course-hero-icon">
               {course?.name
                 ?.charAt(0)
@@ -208,7 +336,6 @@ function CoursePage() {
             </div>
 
             <div className="course-hero-copy">
-
               <span className="course-eyebrow">
                 Course Workspace
               </span>
@@ -222,9 +349,7 @@ function CoursePage() {
                 {course?.description ||
                   "Organize your materials and generate study tools."}
               </p>
-
             </div>
-
           </div>
 
           <button
@@ -234,7 +359,6 @@ function CoursePage() {
           >
             Delete Course
           </button>
-
         </section>
 
         {/* =====================
@@ -323,6 +447,20 @@ function CoursePage() {
             Flashcards
           </button>
 
+          <button
+            type="button"
+            className={
+              activeTab === "progress"
+                ? "course-tab active"
+                : "course-tab"
+            }
+            onClick={() =>
+              setActiveTab("progress")
+            }
+          >
+            Progress
+          </button>
+
         </nav>
 
         {/* =====================
@@ -364,6 +502,7 @@ function CoursePage() {
           {activeTab === "quizzes" && (
             <QuizTab
               courseId={courseId}
+              practiceQuiz={practiceQuiz}
             />
           )}
 
@@ -376,10 +515,20 @@ function CoursePage() {
             />
           )}
 
+          {activeTab === "progress" && (
+            <ProgressTab
+              courseId={courseId}
+              stats={quizStats}
+              attempts={quizAttempts}
+              weakTopics={weakTopics}
+              loading={loadingQuizStats}
+              setActiveTab={setActiveTab}
+              setPracticeQuiz={setPracticeQuiz}
+            />
+          )}
+
         </main>
-
       </div>
-
     </div>
   );
 }

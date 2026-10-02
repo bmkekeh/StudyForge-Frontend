@@ -47,7 +47,32 @@ function FlashcardsTab({
       return;
     }
 
-    loadSavedFlashcards();
+    async function load() {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/courses/${courseId}/flashcards`,
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load flashcards.",
+          );
+        }
+
+        const data: SavedFlashcardSet[] =
+          await response.json();
+
+        setSavedFlashcards(data);
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          "Could not load saved flashcards.",
+        );
+      }
+    }
+
+    void load();
   }, [courseId]);
 
   const loadSavedFlashcards = async () => {

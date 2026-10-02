@@ -38,10 +38,35 @@ function SummaryTab({
       return;
     }
 
-    loadSavedSummaries();
+    async function load() {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/courses/${courseId}/summary`,
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load summaries.",
+          );
+        }
+
+        const data: SavedSummary[] =
+          await response.json();
+
+        setSavedSummaries(data);
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          "Could not load saved summaries.",
+        );
+      }
+    }
+
+    void load();
   }, [courseId]);
 
-  const loadSavedSummaries = async () => {
+  async function loadSavedSummaries()  {
     try {
       const response = await fetch(
         `http://localhost:8080/courses/${courseId}/summary`,
@@ -64,7 +89,8 @@ function SummaryTab({
         "Could not load saved summaries.",
       );
     }
-  };
+  }
+
 
   /* =========================
      GENERATE SUMMARY

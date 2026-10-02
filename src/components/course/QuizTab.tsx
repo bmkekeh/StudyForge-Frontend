@@ -7,6 +7,8 @@ import type {
   Quiz,
   SavedQuiz,
   QuizAttempt,
+  QuizMistake,
+  GeneratedQuizResponse,
 } from "../../types/course";
 
 import QuizGenerator from "./quiz/QuizGenerator";
@@ -17,22 +19,29 @@ import AttemptHistory from "./quiz/AttemptHistory";
 
 type QuizTabProps = {
   courseId: number;
+  practiceQuiz:
+    GeneratedQuizResponse | null;
 };
 
 function QuizTab({
   courseId,
+  practiceQuiz,
 }: QuizTabProps) {
   /* =========================
      QUIZ DATA
   ========================= */
 
   const [quiz, setQuiz] =
-    useState<Quiz | null>(null);
+    useState<Quiz | null>(
+      practiceQuiz?.quiz ?? null,
+    );
 
   const [
     currentQuizId,
     setCurrentQuizId,
-  ] = useState<number | null>(null);
+  ] = useState<number | null>(
+    practiceQuiz?.quizId ?? null,
+  );
 
   const [
     savedQuizzes,
@@ -75,7 +84,9 @@ function QuizTab({
   const [
     selectedAnswer,
     setSelectedAnswer,
-  ] = useState<number | null>(null);
+  ] = useState<number | null>(
+    null,
+  );
 
   const [
     answerSubmitted,
@@ -84,6 +95,13 @@ function QuizTab({
 
   const [score, setScore] =
     useState(0);
+
+  const [
+    mistakes,
+    setMistakes,
+  ] = useState<QuizMistake[]>(
+    [],
+  );
 
   const [
     quizFinished,
@@ -109,39 +127,58 @@ function QuizTab({
       return;
     }
 
-    loadSavedQuizzes();
-    loadQuizAttempts();
-  }, [courseId]);
-
-  /* =========================
-     LOAD SAVED QUIZZES
-  ========================= */
-
-  const loadSavedQuizzes =
-    async () => {
+    async function load() {
       try {
-        const response = await fetch(
-          `http://localhost:8080/courses/${courseId}/quiz`,
-        );
+        const [
+          quizzesResponse,
+          attemptsResponse,
+        ] = await Promise.all([
+          fetch(
+            `http://localhost:8080/courses/${courseId}/quiz`,
+          ),
+          fetch(
+            `http://localhost:8080/courses/${courseId}/quiz-attempts`,
+          ),
+        ]);
 
-        if (!response.ok) {
+        if (!quizzesResponse.ok) {
           throw new Error(
             "Failed to load saved quizzes.",
           );
         }
 
-        const data: SavedQuiz[] =
-          await response.json();
+        if (!attemptsResponse.ok) {
+          throw new Error(
+            "Failed to load quiz attempts.",
+          );
+        }
 
-        setSavedQuizzes(data);
+        const savedQuizData:
+          SavedQuiz[] =
+          await quizzesResponse.json();
+
+        const attemptData:
+          QuizAttempt[] =
+          await attemptsResponse.json();
+
+        setSavedQuizzes(
+          savedQuizData,
+        );
+
+        setQuizAttempts(
+          attemptData,
+        );
       } catch (err) {
         console.error(err);
 
         setError(
-          "Could not load saved quizzes.",
+          "Could not load quiz data.",
         );
       }
-    };
+    }
+
+    void load();
+  }, [courseId]);
 
   /* =========================
      LOAD ATTEMPTS
@@ -150,9 +187,10 @@ function QuizTab({
   const loadQuizAttempts =
     async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/courses/${courseId}/quiz-attempts`,
-        );
+        const response =
+          await fetch(
+            `http://localhost:8080/courses/${courseId}/quiz-attempts`,
+          );
 
         if (!response.ok) {
           throw new Error(
@@ -160,7 +198,8 @@ function QuizTab({
           );
         }
 
-        const data: QuizAttempt[] =
+        const data:
+          QuizAttempt[] =
           await response.json();
 
         setQuizAttempts(data);
@@ -173,101 +212,127 @@ function QuizTab({
      RESET
   ========================= */
 
-  const resetQuizProgress = () => {
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer(null);
-    setAnswerSubmitted(false);
-    setScore(0);
-    setQuizFinished(false);
-  };
+  const resetQuizProgress =
+    () => {
+      setCurrentQuestionIndex(
+        0,
+      );
+
+      setSelectedAnswer(null);
+
+      setAnswerSubmitted(
+        false,
+      );
+
+      setScore(0);
+
+      setMistakes([]);
+
+      setQuizFinished(false);
+    };
 
   /* =========================
      GENERATE QUIZ
   ========================= */
 
-  const generateQuiz = async () => {
-    setGeneratingQuiz(true);
+  const generateQuiz =
+    async () => {
+      setGeneratingQuiz(true);
 
-    setError("");
-    setMessage("");
-    setCurrentQuizId(null);
+      setError("");
+      setMessage("");
+      setCurrentQuizId(null);
 
-    try {
-      const response = await fetch(
-        `http://localhost:8080/courses/${courseId}/quiz/generate?questionCount=${questionCount}&difficulty=${difficulty}`,
-        {
-          method: "POST",
-        },
-      );
-
-      if (!response.ok) {
-        const text =
-          await response.text();
-
-        throw new Error(
-          text ||
-            "Failed to generate quiz.",
-        );
-      }
-
-      const data: Quiz =
-        await response.json();
-
-      setQuiz(data);
-
-      resetQuizProgress();
-
-      /*
-       * Reload saved quizzes so we
-       * can get the generated quiz ID.
-       */
-      const savedResponse =
-        await fetch(
-          `http://localhost:8080/courses/${courseId}/quiz`,
-        );
-
-      if (!savedResponse.ok) {
-        throw new Error(
-          "Quiz generated, but its saved record could not be loaded.",
-        );
-      }
-
-      const savedData:
-        SavedQuiz[] =
-        await savedResponse.json();
-
-      setSavedQuizzes(savedData);
-
-      if (savedData.length > 0) {
-        const newestQuiz =
-          savedData.reduce(
-            (newest, current) =>
-              current.id >
-              newest.id
-                ? current
-                : newest,
+      try {
+        const response =
+          await fetch(
+            `http://localhost:8080/courses/${courseId}/quiz/generate?questionCount=${questionCount}&difficulty=${difficulty}`,
+            {
+              method: "POST",
+            },
           );
 
-        setCurrentQuizId(
-          newestQuiz.id,
+        if (!response.ok) {
+          const text =
+            await response.text();
+
+          throw new Error(
+            text ||
+              "Failed to generate quiz.",
+          );
+        }
+
+        const data: Quiz =
+          await response.json();
+
+        setQuiz(data);
+
+        resetQuizProgress();
+
+        /*
+         * Reload saved quizzes so
+         * we can determine the ID
+         * of the newly generated
+         * quiz.
+         */
+        const savedResponse =
+          await fetch(
+            `http://localhost:8080/courses/${courseId}/quiz`,
+          );
+
+        if (
+          !savedResponse.ok
+        ) {
+          throw new Error(
+            "Quiz generated, but its saved record could not be loaded.",
+          );
+        }
+
+        const savedData:
+          SavedQuiz[] =
+          await savedResponse.json();
+
+        setSavedQuizzes(
+          savedData,
+        );
+
+        if (
+          savedData.length > 0
+        ) {
+          const newestQuiz =
+            savedData.reduce(
+              (
+                newest,
+                current,
+              ) =>
+                current.id >
+                newest.id
+                  ? current
+                  : newest,
+            );
+
+          setCurrentQuizId(
+            newestQuiz.id,
+          );
+        }
+
+        setMessage(
+          "Quiz generated successfully.",
+        );
+      } catch (err) {
+        console.error(err);
+
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Could not generate quiz.",
+        );
+      } finally {
+        setGeneratingQuiz(
+          false,
         );
       }
-
-      setMessage(
-        "Quiz generated successfully.",
-      );
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Could not generate quiz.",
-      );
-    } finally {
-      setGeneratingQuiz(false);
-    }
-  };
+    };
 
   /* =========================
      OPEN SAVED QUIZ
@@ -378,8 +443,7 @@ function QuizTab({
 
   const submitAnswer = () => {
     if (
-      selectedAnswer ===
-        null ||
+      selectedAnswer === null ||
       !quiz ||
       answerSubmitted
     ) {
@@ -391,13 +455,37 @@ function QuizTab({
         currentQuestionIndex
       ];
 
-    if (
+    const isCorrect =
       selectedAnswer ===
-      currentQuestion.correctAnswer
-    ) {
+      currentQuestion
+        .correctAnswer;
+
+    if (isCorrect) {
       setScore(
         (current) =>
           current + 1,
+      );
+    } else {
+      /*
+       * Store both the topic and
+       * question so the backend
+       * can later determine which
+       * topics the student struggles
+       * with most often.
+       */
+      setMistakes(
+        (current) => [
+          ...current,
+          {
+            topic:
+              currentQuestion
+                .topic,
+
+            question:
+              currentQuestion
+                .question,
+          },
+        ],
       );
     }
 
@@ -424,6 +512,25 @@ function QuizTab({
         );
       }
 
+      console.log(
+        "Saving quiz attempt:",
+        {
+          courseId,
+
+          quizId:
+            currentQuizId,
+
+          score:
+            finalScore,
+
+          totalQuestions:
+            quiz.questions
+              .length,
+
+          mistakes,
+        },
+      );
+
       const response =
         await fetch(
           `http://localhost:8080/courses/${courseId}/quiz-attempts`,
@@ -435,17 +542,21 @@ function QuizTab({
                 "application/json",
             },
 
-            body: JSON.stringify({
-              quizId:
-                currentQuizId,
+            body:
+              JSON.stringify({
+                quizId:
+                  currentQuizId,
 
-              score:
-                finalScore,
+                score:
+                  finalScore,
 
-              totalQuestions:
-                quiz.questions
-                  .length,
-            }),
+                totalQuestions:
+                  quiz.questions
+                    .length,
+
+                mistakes:
+                  mistakes,
+              }),
           },
         );
 
@@ -482,7 +593,9 @@ function QuizTab({
             current + 1,
         );
 
-        setSelectedAnswer(null);
+        setSelectedAnswer(
+          null,
+        );
 
         setAnswerSubmitted(
           false,
@@ -492,15 +605,12 @@ function QuizTab({
       }
 
       /*
-       * IMPORTANT:
-       *
-       * score already contains the
-       * result of the final answer
-       * because the user clicked
-       * Submit Answer before reaching
-       * this function.
+       * The answer has already
+       * been submitted before
+       * Next is used.
        */
-      const finalScore = score;
+      const finalScore =
+        score;
 
       setQuizFinished(true);
 
@@ -542,13 +652,18 @@ function QuizTab({
     <div className="quiz-tab">
 
       <div className="quiz-tab-header">
-        <h2>Quizzes</h2>
+
+        <h2>
+          Quizzes
+        </h2>
 
         <p>
-          Generate quizzes from your
-          uploaded course material and
-          track your performance.
+          Generate quizzes from
+          your uploaded course
+          material and track your
+          performance.
         </p>
+
       </div>
 
       {error && (
@@ -567,7 +682,9 @@ function QuizTab({
         questionCount={
           questionCount
         }
-        difficulty={difficulty}
+        difficulty={
+          difficulty
+        }
         generatingQuiz={
           generatingQuiz
         }
@@ -613,7 +730,8 @@ function QuizTab({
           <QuizResults
             score={score}
             totalQuestions={
-              quiz.questions.length
+              quiz.questions
+                .length
             }
             restartQuiz={
               restartQuiz

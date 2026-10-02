@@ -1,0 +1,295 @@
+/* =========================
+   PROGRESS / ANALYTICS
+========================= */
+
+.progress-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+  margin-bottom: 24px;
+}
+
+.progress-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  min-height: 145px;
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.progress-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #d1d5db;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.progress-stat-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7280;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progress-stat-value {
+  margin-top: 4px;
+
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #111827;
+}
+
+.progress-stat-description {
+  margin-top: auto;
+
+  font-size: 0.88rem;
+  color: #9ca3af;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+  .progress-stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 560px) {
+  .progress-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   PERFORMANCE HISTORY
+========================= */
+
+.progress-history {
+  margin-top: 24px;
+  padding: 24px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+.progress-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 24px;
+}
+
+.progress-section-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  color: #111827;
+}
+
+.progress-section-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* =========================
+   CHART
+========================= */
+
+.progress-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+
+  height: 230px;
+  padding-top: 30px;
+
+  overflow-x: auto;
+}
+
+.progress-chart-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 52px;
+  height: 100%;
+}
+
+.progress-chart-score {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.progress-chart-track {
+  display: flex;
+  align-items: flex-end;
+
+  width: 34px;
+  flex: 1;
+
+  background: #f3f4f6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progress-chart-bar {
+  width: 100%;
+  min-height: 2px;
+
+  background: #111827;
+  border-radius: 8px;
+
+  transition: height 0.3s ease;
+}
+
+.progress-chart-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.progress-chart-caption {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 12px;
+
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* =========================
+   ATTEMPT LIST
+========================= */
+
+.progress-attempt-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-attempt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.progress-attempt-row:first-child {
+  padding-top: 0;
+}
+
+.progress-attempt-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.progress-attempt-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-attempt-info strong {
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.progress-attempt-info span {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.progress-attempt-score {
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 560px) {
+  .progress-history {
+    padding: 18px;
+  }
+
+  .progress-chart {
+    height: 190px;
+  }
+}
+/* =========================
+   WEAK TOPICS
+========================= */
+
+.weak-topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.weak-topic-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weak-topic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.weak-topic-header strong {
+  font-size: 0.95rem;
+}
+
+.weak-topic-header span {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.weak-topic-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.weak-topic-bar {
+  height: 100%;
+  min-width: 8px;
+  border-radius: inherit;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
