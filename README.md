@@ -28,6 +28,50 @@ The frontend currently supports:
 * Viewing weak topics based on previous mistakes
 * Generating targeted practice quizzes for weak topics
 
+## Screenshots
+
+### Dashboard
+
+Create courses and access existing study workspaces from the main dashboard.
+
+![StudyForge Dashboard](docs/screenshots/dashboard.png)
+
+### Course Overview
+
+Each course provides a dedicated workspace for accessing materials and study tools.
+
+![Course Overview](docs/screenshots/overview.png)
+
+### Study Materials
+
+Upload and manage course materials that StudyForge uses to generate personalized study resources.
+
+![Study Materials](docs/screenshots/materials.png)
+
+### AI-Generated Summaries
+
+Generate study summaries and key concepts from uploaded course materials.
+
+![Study Summary](docs/screenshots/summary.png)
+
+### Quizzes
+
+Generate quizzes with configurable difficulty and question counts, complete them interactively, and review previous attempts.
+
+![StudyForge Quizzes](docs/screenshots/quizzes.png)
+
+### Flashcards
+
+Generate and review flashcards based on uploaded course content.
+
+![StudyForge Flashcards](docs/screenshots/flashcards.png)
+
+### Progress Analytics & Targeted Practice
+
+Track quiz performance, identify weak topics from previous mistakes, and generate targeted quizzes focused on areas that need more practice.
+
+![StudyForge Progress Analytics](docs/screenshots/progress.png)
+
 ## Study Workflow
 
 The main StudyForge workflow is:
