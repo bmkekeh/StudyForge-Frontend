@@ -1,12 +1,12 @@
 # StudyForge Frontend
 
-This is the frontend for **StudyForge**, a study application I am building to help students turn their course materials into useful study tools.
+StudyForge is a study application that helps students turn their own course materials into personalized study resources.
 
-I started this project because I wanted to build something that combined a normal course workspace with AI-powered study features. Instead of having notes, quizzes, flashcards, and study material in different places, StudyForge puts them together inside each course.
+I built StudyForge to combine course materials, summaries, quizzes, flashcards, and study progress inside one course-based workspace.
 
 This repository contains the **React + TypeScript frontend**.
 
-## Current Features
+## Features
 
 The frontend currently supports:
 
@@ -15,18 +15,68 @@ The frontend currently supports:
 * Viewing uploaded materials
 * Generating study summaries
 * Viewing saved summaries
+* Generating flashcards
+* Reviewing generated flashcards
 * Generating quizzes
-* Choosing quiz difficulty and number of questions
+* Choosing quiz difficulty and question count
 * Answering quizzes interactively
-* Getting feedback and explanations for answers
+* Receiving answer explanations
 * Viewing quiz results
 * Saving and reopening generated quizzes
-* Tracking previous quiz attempts and scores
-* Generating and reviewing flashcards
+* Viewing previous quiz attempts
+* Tracking quiz performance over time
+* Viewing weak topics based on previous mistakes
+* Generating targeted practice quizzes for weak topics
+
+## Study Workflow
+
+The main StudyForge workflow is:
+
+```text
+Create Course
+     ↓
+Upload Course Materials
+     ↓
+Generate Study Resources
+     ↓
+Summaries / Flashcards / Quizzes
+     ↓
+Complete Quizzes
+     ↓
+View Progress
+     ↓
+Identify Weak Topics
+     ↓
+Generate Targeted Practice
+```
+
+## Progress Analytics
+
+StudyForge includes a dedicated **Progress** section for each course.
+
+It displays:
+
+* Quizzes completed
+* Average quiz score
+* Best quiz score
+* Latest quiz score
+* Performance history
+* Recent quiz attempts
+* Weak topics
+
+Quiz performance is displayed over time so students can see how their results change across attempts.
+
+## Weak Topic Practice
+
+Incorrect quiz answers are associated with the topic of the question.
+
+StudyForge uses this information to identify topics that appear repeatedly in a student's mistakes.
+
+From the Progress section, the student can generate a new quiz focused specifically on those weak topics.
+
+The targeted quiz behaves like a normal StudyForge quiz and is also saved so its result can contribute to future progress tracking.
 
 ## Tech Stack
-
-The frontend currently uses:
 
 * React
 * TypeScript
@@ -35,13 +85,13 @@ The frontend currently uses:
 * CSS
 * Fetch API
 
-The application communicates with a Spring Boot backend through REST API calls.
+The frontend communicates with the StudyForge Spring Boot backend through REST API calls.
 
-## Project Structure
+## Component Structure
 
-I have been splitting the frontend into smaller components as the project grows instead of keeping everything inside one large page.
+The frontend is split into smaller feature-based components rather than keeping the entire application inside large page components.
 
-For example, the quiz feature is separated into components for:
+For example, the quiz interface includes:
 
 ```text
 QuizTab
@@ -52,60 +102,85 @@ QuizTab
 └── AttemptHistory
 ```
 
-This makes the project easier for me to maintain and makes it easier to add features without turning individual files into extremely large components.
+Course functionality is organized into tabs for:
+
+```text
+Course
+├── Overview
+├── Materials
+├── Summary
+├── Quizzes
+├── Flashcards
+└── Progress
+```
+
+This keeps individual features easier to maintain as the project grows.
 
 ## Running the Frontend
 
-Install the dependencies:
+### Requirements
+
+Make sure you have Node.js and npm installed.
+
+The StudyForge backend must also be running for API-dependent features to work.
+
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-Start the development server:
+### Start Development Server
 
 ```bash
 npm run dev
 ```
 
-Vite will display the local development URL in the terminal.
+Vite will display the development URL in the terminal.
 
-The StudyForge backend also needs to be running for features such as courses, uploads, quizzes, summaries, and flashcards to work.
+By default, the frontend communicates with the backend running at:
+
+```text
+http://localhost:8080
+```
+
+## Production Build
+
+Create a production build with:
+
+```bash
+npm run build
+```
+
+## Linting
+
+Run the frontend linter with:
+
+```bash
+npm run lint
+```
 
 ## Backend
 
-The Spring Boot backend for this project is available here:
+The Spring Boot + PostgreSQL backend is available here:
 
 https://github.com/bmkekeh/StudyForge
 
-The backend handles the database, REST API, course materials, generated study content, and quiz attempt history.
+The backend handles:
 
-## Current Status
+* Course and material storage
+* Study-content generation
+* Generated quizzes and flashcards
+* Quiz attempt persistence
+* Mistake tracking
+* Progress statistics
+* Weak-topic analysis
+* Targeted quiz generation
 
-StudyForge is still under development.
+## Project Status
 
-I am currently focused on getting the main functionality working first and then improving the UI and adding more useful study features.
+The core StudyForge experience is functional.
 
-So far, the main workflow is:
+Students can create courses, upload their own materials, generate study resources, complete quizzes, review their performance, identify weak areas, and generate additional practice based on those weaknesses.
 
-```text
-Create a course
-      ↓
-Upload course material
-      ↓
-Generate study resources
-      ↓
-Study with summaries, quizzes and flashcards
-      ↓
-Track quiz performance
-```
-
-There is still more I want to add, but the core study workflow is working.
-
-## Backend
-
-The backend for StudyForge is available here:
-
-[StudyForge Backend](https://github.com/bmkekeh/StudyForge)
-
-It is built with Spring Boot and PostgreSQL and handles the REST API, database storage, course materials, generated study content, and quiz attempt history.
+I am continuing to improve the project, particularly its user experience and overall production readiness.
